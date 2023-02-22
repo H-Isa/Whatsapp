@@ -1,0 +1,6 @@
+todos
+1. fetch data
+2. Post data
+ {content: hello world,
+  username: mujahid,
+  time stamp: 02/20/2020}

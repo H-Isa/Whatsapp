@@ -1,0 +1,43 @@
+.form{
+    display: flex;   
+    justify-content: space-between; 
+}
+
+.inputs{
+    display: flex;
+    flex-direction: column;
+
+    & input{
+        height: 1.5rem;
+        width: 25rem;
+        border: 1px solid #ccc;
+        border-right: none;
+        border-left: none;
+        border-top: none;
+        margin: 2px 0;
+        outline: none;
+    }
+
+    & div{
+        color: red;
+        font-size: 13px;
+    }
+}
+
+.error{
+    margin: 0;
+}
+
+.sendBtn{
+    height: 2rem;
+    width: 2rem;
+    border: none;
+    border-radius: 50%;
+    align-self: center;
+    outline: none;
+
+    :hover{
+        cursor: pointer;
+    }
+
+}
