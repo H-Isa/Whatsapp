@@ -1,0 +1,115 @@
+.backdrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.container{
+    position: fixed;
+    top: 16vh;
+    left: 35.5%;
+    z-index: 100;
+    overflow: hidden;
+    height: 16rem;
+    width: 20rem;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 5rem auto;
+    padding: 2rem 2.5rem;
+
+    @media only screen and (max-width: 390px){
+        position: fixed;
+        top: 10vh;
+        left: 5%;
+        height: 16rem;
+        width: 15rem;
+        padding: 1.3rem;
+    }
+
+    &_title{
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+}
+
+.form{
+
+    &_email{
+        height: 1.6rem;
+        width: 19.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 1rem;    
+        outline: none;
+
+        @media only screen and (max-width: 390px){
+            width: 14.5rem; 
+        }
+    }
+
+    &_displayName{
+        height: 1.6rem;
+        width: 19.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 1rem;      
+        outline: none;
+
+        @media only screen and (max-width: 390px){
+            width: 14.5rem; 
+        }
+    }
+
+    &_password{
+        height: 1.6rem;
+        width: 19.5rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 1rem;   
+        outline: none;
+        
+        @media only screen and (max-width: 390px){
+            width: 14.5rem; 
+        }
+    }
+}
+
+.signUpBtn{
+    height: auto;
+    width: 4rem;
+    padding: 5px;
+    background-color: #4c516D;
+    color: whitesmoke; 
+    border: none;
+    border-radius: 5px;
+}
+
+.signIn{
+    display: flex;
+    justify-content: space-between;
+}
+
+.signInMessage{
+    font-size: 0.7rem;
+    color: blue;
+    width: 8rem;
+    text-decoration: none;
+    cursor:pointer;
+}
+
+.error{
+    color: red;
+    font-size: 13px;
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.loading{
+    margin: 0;
+    padding-bottom: 10px;
+}

@@ -1,6 +1,10 @@
 .form{
     display: flex;   
     justify-content: space-between; 
+    @media only screen and (max-width: 390px){
+        margin-top: 8rem;
+        justify-content: normal;
+    }
 }
 
 .inputs{
@@ -16,6 +20,10 @@
         border-top: none;
         margin: 2px 0;
         outline: none;
+
+        @media only screen and (max-width: 390px){
+            width: 20rem;
+        }
     }
 
     & div{
