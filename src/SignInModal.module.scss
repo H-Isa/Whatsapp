@@ -22,10 +22,10 @@
     margin: 5rem auto;
     padding: 2.5rem;
 
-    @media only screen and (max-width: 390px){
+    @media only screen and (max-width: 420px){
         position: fixed;
         top: 10vh;
-        left: 5%;
+        left: 15%;
         height: 13rem;
         width: 15rem;
         padding: 1.3rem;
@@ -47,7 +47,7 @@
         margin: 1rem 0;    
         outline: none;
 
-        @media only screen and (max-width: 390px){
+        @media only screen and (max-width: 420px){
             width: 14.5rem; 
         }
     }
@@ -60,7 +60,7 @@
         margin-bottom: 1rem;
         outline: none;
 
-        @media only screen and (max-width: 390px){
+        @media only screen and (max-width: 420px){
             width: 14.5rem; 
         }
     }

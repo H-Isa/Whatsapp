@@ -53,9 +53,7 @@ const Container = ({user,setUser}) => {
         setIsLoading(true)
     
         fetchChats();
-      
     }, [])
-
 
     return ( 
         <div className={classes.container}>
@@ -69,7 +67,7 @@ const Container = ({user,setUser}) => {
             </header>
             <div className={classes.body} ref={background}>
                 <div className={classes.subheading}>
-                    <div className={classes.body_title}>Mini Message Board</div>
+                    <div className={classes.body_title}>Message Board</div>
                     <button onClick={handleSignOut}>Logout</button>
                 </div>
             

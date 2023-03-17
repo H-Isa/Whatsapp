@@ -1,8 +1,7 @@
 .form{
     display: flex;   
     justify-content: space-between; 
-    @media only screen and (max-width: 390px){
-        margin-top: 8rem;
+    @media only screen and (max-width: 420px){
         justify-content: normal;
     }
 }
@@ -21,7 +20,7 @@
         margin: 2px 0;
         outline: none;
 
-        @media only screen and (max-width: 390px){
+        @media only screen and (max-width: 420px){
             width: 20rem;
         }
     }
