@@ -1,11 +1,21 @@
-import { Fragment, useState } from 'react';
-import Container from './Container';
-import SignUpModal from './SignUpModal';
-import { initializeApp } from '@firebase/app';
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut} from "firebase/auth"
-import { createBrowserRouter, Navigate, RouterProvider, useNavigate } from "react-router-dom";
-import SignInModal from './SignInModal';
-
+import { Fragment, useState, useLayoutEffect } from "react";
+import Container from "./Container";
+import SignUpModal from "./SignUpModal";
+import { initializeApp } from "@firebase/app";
+import {
+  getAuth,
+  setPersistence,
+  browserSessionPersistence,
+  onAuthStateChanged,
+} from "firebase/auth";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
+import SignInModal from "./SignInModal";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDwoREE8VWwI28LQEgAAh1Tj3eFhv9M1vQ",
@@ -15,39 +25,54 @@ const firebaseConfig = {
   storageBucket: "message-board-48bb4.appspot.com",
   messagingSenderId: "47754545125",
   appId: "1:47754545125:web:c058dbd4a4dd463630110c",
-  measurementId: "G-7DJLZ7CZGS"
+  measurementId: "G-7DJLZ7CZGS",
 };
 
-initializeApp(firebaseConfig)
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(localStorage.getItem('user'));
+  const auth = getAuth();
 
-  const [user, setUser] = useState(null)
+  useLayoutEffect(() => {
+    const subs = onAuthStateChanged(auth, function (user) {
+      if (user) {
+        localStorage.setItem("user", user);
+        return setCurrentUser(user);
+      }
+      setCurrentUser(null);
+      localStorage.clear("user");
+    });
+    return subs;
+  }, [auth]);
 
   const router = createBrowserRouter([
-    {path: '/signup', element: <SignUpModal /> },
-    
-    {path: '/signin', element: !user ? <SignInModal user={user}
-                                                    setUser={setUser}/> : <Navigate replace to={"/chat"} />},
+    { path: "/signup", element: <SignUpModal /> },
 
-    {path: '/chat', element: user ?  <Container  user={user}
-                                                 setUser={setUser}
-                                      /> : <Navigate replace to={"/signin"} />},
+    {
+      path: "/signin",
+      element: !currentUser ? (
+        <SignInModal user={user} setUser={setUser} />
+      ) : (
+        <Navigate replace to={"/"} />
+      ),
+    },
+    {
+      path: "/",
+      element: currentUser ? (
+        <Container user={user} setUser={setUser} db={db} />
+      ) : (
+        <Navigate replace to={"/signin"} />
+      ),
+    },
+  ]);
 
-  ])
-
-  return <RouterProvider router={router} />
-
+  return <RouterProvider router={router} />;
 }
 
 export default App;
-
-
-
-
-
-
-
 
 // import { Fragment, useState } from 'react';
 // import Container from './Container';
@@ -56,7 +81,6 @@ export default App;
 // import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut} from "firebase/auth"
 // import { createBrowserRouter, Navigate, RouterProvider, useNavigate } from "react-router-dom";
 // import SignInModal from './SignInModal';
-
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyDwoREE8VWwI28LQEgAAh1Tj3eFhv9M1vQ",
@@ -85,10 +109,9 @@ export default App;
 //   const auth = getAuth();
 //   // const navigate = useNavigate()
 
-
 //   const onSignUp = (e) => {
 //     e.preventDefault()
-    
+
 //     if (signUpEmail.trim().length === 0 ||
 //         !signUpEmail.includes('@') ||
 //         signUpPassword.trim().length < 6
@@ -115,11 +138,11 @@ export default App;
 //   }
 
 //   const onSignIn = (e) => {
-//     e.preventDefault(); 
+//     e.preventDefault();
 //     setIsLoading(true)
 //     signInWithEmailAndPassword(auth, enteredEmail, enteredPassword)
 //       .then((cred)=> {
-//           setUser(cred.user) 
+//           setUser(cred.user)
 //           setIsLoading(false)
 //       })
 //       .catch(()=> {
@@ -130,7 +153,7 @@ export default App;
 //   }
 
 //   const onSignOut = () => {
-    
+
 //     return signOut(auth)
 //         // .then(()=>{
 //         //   setUser(null)
@@ -141,7 +164,7 @@ export default App;
 
 //   const router = createBrowserRouter([
 //     {path: '/signup', element: <SignUpModal onSignUp={onSignUp}
-//                                             signUpEmail={signUpEmail} 
+//                                             signUpEmail={signUpEmail}
 //                                             setSignUpEmail={setSignUpEmail}
 //                                             signUpDisplayName={signUpDisplayName}
 //                                             setSignUpDisplayName={setSignUpDisplayName}
@@ -150,19 +173,19 @@ export default App;
 //                                             showError={showError}
 //                                             isloading={isloading}/>
 //     },
-    
+
 //     {path: '/signin', element: !user ? <SignInModal onSignIn={onSignIn}
-//                                                     enteredEmail={enteredEmail} 
+//                                                     enteredEmail={enteredEmail}
 //                                                     setEnteredEmail={setEnteredEmail}
 //                                                     enteredPassword={enteredPassword}
 //                                                     setEnteredPassword={setEnteredPassword}
 //                                                     showError={showError}
 //                                                     isloading={isloading}/> : <Navigate replace to={"/chat"} />},
 
-//     {path: '/chat', element: user ?  <Container enteredEmail={enteredEmail} 
+//     {path: '/chat', element: user ?  <Container enteredEmail={enteredEmail}
 //                                         user={user}
 //                                         setUser={setUser}
-//                                         displayName={displayName} 
+//                                         displayName={displayName}
 //                                         onSignOut={onSignOut}/> : <Navigate replace to={"/signin"} />},
 
 //   ])

@@ -1,119 +1,117 @@
 import Form from "./Form";
-import { useEffect, useRef, useState } from 'react';
-import classes from './container.module.scss'
+import { useEffect, useRef, useState } from "react";
+import classes from "./container.module.scss";
 import NewChat from "./NewChat";
 import { useNavigate } from "react-router-dom";
-import {getAuth, signOut} from "firebase/auth"
+import { getAuth, signOut } from "firebase/auth";
+import { onValue, ref } from "firebase/database";
 
+const Container = ({ user, setUser, db }) => {
+  const [timeline, setTimeline] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [isloading, setIsLoading] = useState(false);
+  const background = useRef();
+  const itemsRef = useRef();
+  const navigate = useNavigate();
+  const auth = getAuth();
 
-const Container = ({user,setUser}) => {
+  const changeBackground = (color) => {
+    background.current.style.backgroundColor = color;
+  };
 
-    const [timeline, setTimeline] = useState([]);
-    const [currentChat, setCurrentChat] = useState(null);
-    const [isloading, setIsLoading] = useState(false);
-    const background = useRef();
-    const itemsRef = useRef();
-    const navigate = useNavigate();
-    const auth = getAuth()
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        navigate("/signin");
+      })
+      .catch(() => {});
+  };
 
-    const changeBackground = (color) => {
-        background.current.style.backgroundColor = color;
+  const fetchChats = async () => {
+    const response = await fetch(
+      "https://message-board-48bb4-default-rtdb.firebaseio.com/chats.json"
+    );
+    const data = await response.json();
+
+    const loadedChats = [];
+
+    for (const key in data) {
+      loadedChats.push({
+        id: key,
+        displayName: data[key].displayName,
+        message: data[key].message,
+      });
     }
 
-    const handleSignOut = () => {
-        signOut(auth)
-        .then(()=>{
-            setUser(null)
-            navigate("/signin")
-          })
-          .catch(()=>{
-          });
+    setIsLoading(false);
+  };
 
-    }
+  useEffect(() => {
+    setIsLoading(true);
+    let chatRef = ref(db, `chats`);
+    const subs = onValue(chatRef, (snapshot) => {
+      const data = snapshot.val();
+      setTimeline(Object.values(data));
+      setIsLoading(false);
+    });
+    return subs;
+  }, [db]);
 
-    const fetchChats = async () => {
-        const response = await fetch('https://message-board-48bb4-default-rtdb.firebaseio.com/chats.json');
-        const data = await response.json();
-
-        const loadedChats = [];
-
-        for (const key in data) {
-            loadedChats.push({
-                id: key,
-                displayName: data[key].displayName,
-                message: data[key].message,
-            })
-        }
-
-        setTimeline(loadedChats);
-        setIsLoading(false)
-        }
-
-    useEffect(() => {
-        setIsLoading(true)
-    
-        fetchChats();
-    }, [])
-
-    return ( 
-        <div className={classes.container}>
-            <header className={classes.header}>
-                <div className={classes.header_toggle}>
-                    <div className={classes.header_toggle_red} onClick={()=>changeBackground('white')}/>
-                    <div className={classes.header_toggle_yellow} onClick={()=>changeBackground('yellow')}/>
-                    <div className={classes.header_toggle_green} onClick={()=>changeBackground('green')}/>
-                </div>
-                <div className={classes.header_title}>Whatsapp</div>
-            </header>
-            <div className={classes.body} ref={background}>
-                <div className={classes.subheading}>
-                    <div className={classes.body_title}>Message Board</div>
-                    <button onClick={handleSignOut}>Logout</button>
-                </div>
-            
-                <div className={classes.display}>
-                    {isloading && <div>Fetching data</div>}
-
-                    {timeline.map((chat)=>(
-                        <NewChat key={chat.id}
-                                id={chat.id} 
-                                displayName={chat.displayName}
-                                message={chat.message}
-                                timeline={timeline}
-                                currentChat={currentChat}
-                                itemsRef={itemsRef} />   
-                    ))}
-                </div>
-
-            <Form  timeline={timeline}
-                   fetchChats={fetchChats}  
-                   user={user}/>
-
-            </div>
+  return (
+    <div className={classes.container}>
+      <header className={classes.header}>
+        <div className={classes.header_toggle}>
+          <div
+            className={classes.header_toggle_red}
+            onClick={() => changeBackground("white")}
+          />
+          <div
+            className={classes.header_toggle_yellow}
+            onClick={() => changeBackground("yellow")}
+          />
+          <div
+            className={classes.header_toggle_green}
+            onClick={() => changeBackground("green")}
+          />
         </div>
-     );
-}
- 
+        <div className={classes.header_title}>Whatsapp</div>
+      </header>
+      <div className={classes.body} ref={background}>
+        <div className={classes.subheading}>
+          <div className={classes.body_title}>Message Board</div>
+          <button onClick={handleSignOut}>Logout</button>
+        </div>
+
+        <div className={classes.display}>
+          {isloading && <div>Fetching data</div>}
+
+          {timeline.map((chat) => (
+            <NewChat
+              key={chat.id}
+              id={chat.id}
+              displayName={chat.displayName}
+              message={chat.message}
+              timeline={timeline}
+              currentChat={chat}
+              itemsRef={itemsRef}
+            />
+          ))}
+        </div>
+
+        <Form timeline={timeline} fetchChats={fetchChats} user={user} />
+      </div>
+    </div>
+  );
+};
+
 export default Container;
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import Form from "./Form";
 // import { useEffect, useRef, useState } from 'react';
 // import classes from './container.module.scss'
 // import NewChat from "./NewChat";
 // import { Link, useNavigate } from "react-router-dom";
-
 
 // const Container = ({enteredEmail,
 //                    displayName,
@@ -164,15 +162,12 @@ export default Container;
 
 //     useEffect(() => {
 //         setIsLoading(true)
-        
-            
+
 //         fetchChats();
-      
+
 //     }, [])
 
-
-
-//     return ( 
+//     return (
 //         <div className={classes.container}>
 //             <header className={classes.header}>
 //                 <div className={classes.header_toggle}>
@@ -184,34 +179,34 @@ export default Container;
 //             </header>
 //             <div className={classes.body} ref={background}>
 //             <div className={classes.body_title}>Mini Message Board</div>
-            
+
 //             {/* <Link to="/signin"> */}
 //                 <button onClick={handleSignOut}>Logout</button>
 //             {/* </Link> */}
-            
+
 //             <div className={classes.display}>
 //                 {isloading && <div>Fetching data</div>}
 
 //                 {timeline.map((chat)=>(
 //                     <NewChat key={chat.id}
-//                              id={chat.id} 
+//                              id={chat.id}
 //                              displayName={chat.displayName}
 //                              message={chat.message}
 //                              timeline={timeline}
 //                              currentChat={currentChat}
-//                              itemsRef={itemsRef} />   
+//                              itemsRef={itemsRef} />
 //                 ))}
 //             </div>
 
 //             <Form  timeline={timeline}
-//                     fetchChats={fetchChats} 
-//                    enteredEmail={enteredEmail} 
-//                    displayName={displayName} 
+//                     fetchChats={fetchChats}
+//                    enteredEmail={enteredEmail}
+//                    displayName={displayName}
 //                    user={user}/>
 
 //             </div>
 //         </div>
 //      );
 // }
- 
+
 // export default Container;
