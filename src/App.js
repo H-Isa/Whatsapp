@@ -33,7 +33,7 @@ const db = getDatabase(app);
 
 function App() {
   const [user, setUser] = useState(null);
-  const [currentUser, setCurrentUser] = useState(localStorage.getItem('user'));
+  const [currentUser, setCurrentUser] = useState(localStorage.getItem("user"));
   const auth = getAuth();
 
   useLayoutEffect(() => {
@@ -43,7 +43,7 @@ function App() {
         return setCurrentUser(user);
       }
       setCurrentUser(null);
-      localStorage.clear("user");
+      localStorage.clear();
     });
     return subs;
   }, [auth]);
